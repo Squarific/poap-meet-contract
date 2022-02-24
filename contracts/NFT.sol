@@ -2,12 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract NFT is ERC721 {
-  using Counters for Counters.Counter;
-
-  Counters.Counter private currentTokenId;
+contract NFT is ERC721, Ownable {
 
   /// @dev Base token URI used as a prefix by tokenURI().
   string public baseTokenURI;
@@ -16,11 +13,8 @@ contract NFT is ERC721 {
     baseTokenURI = "https://api.poap.be/nft/";
   }
 
-  function mintTo(address recipient) public returns (uint256) {
-    currentTokenId.increment();
-    uint256 newItemId = currentTokenId.current();
-    _safeMint(recipient, newItemId);
-    return newItemId;
+  function mintTo(address recipient, uint256 id) public onlyOwner {
+    _safeMint(recipient, id);
   }
 
   /// @dev Returns an URI for a given token ID
